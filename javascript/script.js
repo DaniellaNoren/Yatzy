@@ -1,5 +1,15 @@
+
+
 var store = new Vuex.Store({
     state: {
+        src: [
+            '../media/dice1.png',
+            '../media/dice2.png',
+            '../media/dice3.png',
+            '../media/dice4.png',
+            '../media/dice5.png',
+            '../media/dice6.png',
+        ],
         rounds: 0,
         chosenProtocol: {},
         protocolIsChosen: false,
@@ -251,6 +261,9 @@ var store = new Vuex.Store({
         },
         rounds: state => {
             return state.rounds;
+        },
+        srces: state => {
+            return state.src;
         }
     },
     actions: {
@@ -448,7 +461,7 @@ var dice = Vue.component('dice', {
     template: `
          
     <div id="gameplay">
-    <div v-for="(index, die) in dice" id="dice{{index}}" @click="saveDice(index)" :class="{ 'used-dice' : !(die.available) }" class="dice"><p>{{die.roll}}</p></div>
+    <div v-for="(index, die) in dice" id="dice{{index}}" @click="saveDice(index)" :class="{ 'used-dice' : !(die.available) }" class="dice"><img :src="srces[die.roll-1]"></div>
     <p id="nr-of-rolls"><strong>Roll:</strong> {{rolls}}</p>
     <div id="btn-holder"> 
         <button class="btn" @click="nextRound" :class="{'disabled-btn': !(protocolIsChosen)}" :disabled="!(protocolIsChosen)" id="done-btn">DONE</button>
@@ -487,7 +500,8 @@ var dice = Vue.component('dice', {
             this.$store.commit('protocolIsNotChosen')
             this.$store.commit('addToRounds');
             if(this.rounds === 16){
-                
+                if(this.rounds === 16)
+                new Audio('../media/cheer.mp3').play()
             }
         }
     },
@@ -496,7 +510,8 @@ var dice = Vue.component('dice', {
             'dice',
             'savedDice',
             'protocolIsChosen',
-            'rounds'
+            'rounds',
+            'srces'
         ])
         }
     
@@ -521,7 +536,7 @@ var startMenu = Vue.component('start-menu', {
             </div>
 
             <div v-else>
-            <h2>Final Score: {{score}}</h2>
+            <h2 style="color:magenta;">Final Score: <span style="color:blue">{{score}}</span></h2>
             <p>Wooaah, woaaah!! Good job, you did the Yatzy !!!!</p>
             <p>I've never been more proud !!!</p>
             </div>
@@ -553,7 +568,7 @@ var menu = Vue.component('menu', {
                     <div class="used-dice-holder">
                         <h3>Saved dice</h3>
                    
-                        <div class="selected-dice" style="display:inline-block;" @click="returnDice(dice)" v-for="dice in savedDice"><p>{{dice.roll}}</p></div>
+                        <div class="selected-dice" style="display:inline-block;" @click="returnDice(dice)" v-for="dice in savedDice"><img :src="srces[dice.roll-1]"></div>
                     
                         </div>
                     <div id="total-score"><h1 id="score-title">Score</h1><h1 id="score">{{score}}</h1></div>
@@ -562,7 +577,8 @@ var menu = Vue.component('menu', {
         ...Vuex.mapGetters([
             'savedDice',
             'score',
-            'rounds'
+            'rounds',
+            'srces'
          ] )
     },
     methods: {
